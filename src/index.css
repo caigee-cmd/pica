@@ -1,0 +1,653 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Round 10: Rakazo web palette (ui-tokens light/dark). Soft solid surfaces. */
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  --color-ink: #1c1c1c;
+  --color-paper: #f5f5f5;
+  --color-surface: #ffffff;
+  /* Thread / main column = Rakazo --background */
+  --color-thread: #ffffff;
+  --color-line: #1c1c1c1f;
+  --color-muted: #1c1c1cad;
+  --color-faint: #1c1c1c8f;
+  --color-accent: #0b6dd3;
+  --color-bubble-user: #1c1c1c;
+  --color-bubble-user-fg: #ffffff;
+  --color-bubble-agent: #f2f2f2;
+  --color-scrollbar: #1c1c1c3d;
+  --color-scrollbar-hover: #1c1c1c85;
+  --color-status-working: #0b6dd3;
+  --color-status-waiting: #aa6300;
+  --color-status-blocked: #cd2834;
+  --color-status-idle: #1c1c1c8f;
+  --color-status-done: #10ab61;
+  --color-success: #00854a;
+  --color-warning: #aa6300;
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06);
+  /* BoardUI shadow-card + soft top inset for paper/glass feel */
+  --shadow-card: 0 1px 1px rgb(0 0 0 / 0.05);
+  --shadow-rail-active: inset 0 1px 1px rgb(0 0 0 / 0.05), 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-composer: 0 4px 24px rgb(0 0 0 / 0.08), 0 1px 2px rgb(0 0 0 / 0.04), inset 0 1px 0 rgb(255 255 255 / 0.72);
+  --radius-shell: 1.25rem;
+  --radius-row: 0.75rem;
+}
+
+/* Rakazo web dark tokens (html.dark or .dark wrapper) */
+.dark {
+  color-scheme: dark;
+  --color-ink: #f5f5f5;
+  --color-paper: #0e0e0e;
+  --color-surface: #1f1f1f;
+  --color-thread: #161616;
+  --color-line: #f5f5f51a;
+  --color-muted: #f5f5f5a8;
+  --color-faint: #f5f5f58a;
+  --color-accent: #4d9bff;
+  --color-bubble-user: #3e3e3e;
+  --color-bubble-user-fg: #f5f5f5;
+  --color-bubble-agent: #1f1f1f;
+  --color-scrollbar: #f5f5f538;
+  --color-scrollbar-hover: #f5f5f580;
+  --color-status-working: #4d9bff;
+  --color-status-waiting: #e28600;
+  --color-status-blocked: #ff6463;
+  --color-status-idle: #f5f5f58a;
+  --color-status-done: #0e9f5a;
+  --color-success: #00ba69;
+  --color-warning: #e28600;
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.35), 0 12px 32px rgb(0 0 0 / 0.45);
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.35);
+  --shadow-rail-active: inset 0 1px 1px rgb(255 255 255 / 0.06), 0 1px 2px rgb(0 0 0 / 0.28);
+  --shadow-composer: 0 8px 28px rgb(0 0 0 / 0.45), 0 1px 2px rgb(0 0 0 / 0.3), inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+
+:root {
+  color-scheme: light;
+  --titlebar-h: 42px;
+  --titlebar-traffic-pad: 12px;
+  --titlebar-controls-pad: 12px;
+  /* Column widths — titlebar three-zone gradient aligns to these */
+  --sidebar-w: 280px;
+  --editor-w: 300px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden; /* HuLa/Lulu: lock viewport — columns scroll, not the page */
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+html.dark body,
+.dark body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+button,
+input,
+textarea {
+  font-family: inherit;
+}
+
+.markdown {
+  /* Rakazo text-body1 ≈ 14/20 */
+  font-size: 0.875rem;
+  line-height: 1.43;
+  overflow-wrap: anywhere;
+}
+
+.markdown p {
+  margin: 0.35em 0;
+}
+
+.markdown p:first-child {
+  margin-top: 0;
+}
+
+.markdown p:last-child {
+  margin-bottom: 0;
+}
+
+.markdown ul,
+.markdown ol {
+  margin: 0.35em 0;
+  padding-left: 1.2em;
+}
+
+.markdown code {
+  font-family: var(--font-mono);
+  font-size: 0.84em;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  padding: 0.1em 0.3em;
+  border-radius: 4px;
+}
+
+.markdown pre {
+  overflow-x: auto;
+  padding: 0.7em 0.8em;
+  border-radius: 12px;
+  background: #18181b;
+  color: #fafafa;
+}
+
+.markdown pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+.markdown a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.markdown img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+}
+
+.markdown .mention {
+  font-weight: 500;
+}
+
+
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+.caret::after {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: currentColor;
+  animation: caret 1s steps(1) infinite;
+}
+
+/* Round 2+: gsap hooks target .pica-avatar-canvas / .pica-thinking-row */
+.pica-avatar-canvas {
+  position: relative;
+}
+
+
+/* Round 2: avatar blink eyes (paused when reduced motion) */
+@keyframes pica-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  96% {
+    transform: scaleY(0.1);
+  }
+}
+
+.pica-eye {
+  transform-origin: center;
+  animation: pica-blink 3.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pica-eye {
+    animation: none;
+  }
+
+  .pica-avatar-alive {
+    transform: none !important;
+  }
+
+  .pica-fly-layer,
+  .pica-fly-clone {
+    display: none !important;
+  }
+}
+
+
+/* Round 3: emotion ring + sleepy lids */
+.pica-emotion-ring {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.pica-eye-happy {
+  transform-origin: center;
+}
+
+.pica-eye-sleepy {
+  border-radius: 999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pica-emotion-ring {
+    transition: none;
+  }
+}
+
+
+/* Round 4: marketplace fade + narrow composer stack */
+@keyframes pica-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes pica-pop-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.pica-marketplace-scrim {
+  animation: pica-fade-in 0.12s ease-out;
+}
+.pica-marketplace-panel {
+  animation: pica-pop-in 0.14s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pica-marketplace-scrim,
+  .pica-marketplace-panel {
+    animation: none;
+  }
+}
+
+@media (max-width: 749px) {
+  .pica-composer-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .pica-composer-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem; /* BoardUI 10px */
+  }
+}
+
+/* Round 6: hover chrome — keep visible without fade when reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .pica-bubble-actions {
+    transition: none !important;
+  }
+  .group\/bubble:focus-within .pica-bubble-actions,
+  .group\/bubble:hover .pica-bubble-actions {
+    opacity: 1;
+  }
+}
+
+/* Round 7: snappy scrim / dialog fade */
+.pica-scrim {
+  animation: pica-fade-in 0.12s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pica-scrim {
+    animation: none;
+  }
+}
+
+/* Round 8+: global kill focus outline / accent focus chrome (user: 选中不要彩边，全局). */
+:focus,
+:focus-visible {
+  outline: none !important;
+  outline-offset: 0 !important;
+}
+.pica-focus-ring:focus-visible {
+  outline: none !important;
+  outline-offset: 0 !important;
+}
+/* Neutralize Tailwind focus:border-accent / focus rings on form controls app-wide */
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible,
+button:focus,
+button:focus-visible,
+[role="button"]:focus,
+[role="button"]:focus-visible {
+  outline: none !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
+}
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible {
+  border-color: var(--color-line) !important;
+}
+.pica-composer-bar,
+.pica-composer-bar *,
+.pica-composer-bar:focus,
+.pica-composer-bar:focus-visible,
+.pica-composer-bar:focus-within,
+.pica-composer-bar *:focus,
+.pica-composer-bar *:focus-visible {
+  outline: none !important;
+  outline-offset: 0 !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-color: transparent !important;
+}
+.pica-composer-bar:focus,
+.pica-composer-bar:focus-visible,
+.pica-composer-bar:focus-within,
+.pica-composer-bar.is-focused {
+  border-color: color-mix(in srgb, var(--color-ink) 28%, var(--color-line)) !important;
+  box-shadow: var(--shadow-composer) !important;
+}
+.pica-composer-bar textarea:focus,
+.pica-composer-bar textarea:focus-visible,
+.pica-composer-bar input:focus,
+.pica-composer-bar input:focus-visible,
+.pica-composer-bar button:focus,
+.pica-composer-bar button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: transparent;
+}
+.pica-bubble-user {
+  background: var(--color-bubble-user);
+  color: var(--color-bubble-user-fg);
+  /* BoardUI user line: soft card lift + faint sheen */
+  box-shadow: var(--shadow-card), inset 0 1px 0 rgb(255 255 255 / 0.1);
+}
+.pica-bubble-user .markdown a {
+  color: color-mix(in srgb, var(--color-bubble-user-fg) 88%, var(--color-accent));
+}
+.pica-toast {
+  animation: pica-fade-in 0.14s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pica-toast {
+    animation: none;
+  }
+}
+button:disabled.pica-send-disabled,
+.pica-send-disabled:disabled {
+  opacity: 1;
+  background: color-mix(in oklab, var(--color-accent) 35%, transparent);
+  color: color-mix(in oklab, white 70%, transparent);
+  box-shadow: none;
+}
+.dark button:disabled.pica-send-disabled,
+.dark .pica-send-disabled:disabled {
+  background: color-mix(in oklab, var(--color-accent) 28%, #18181b);
+  color: rgb(161 161 170);
+}
+
+
+/* Custom titlebar (tauri-plugin-decorum overlay)
+   Lulu/HuLa shell: real three-zone column surfaces, no bottom hairline.
+   Zone fills continue into Sidebar / Thread / Editor — not a floating web strip. */
+.pica-titlebar {
+  -webkit-app-region: drag;
+  app-region: drag;
+  background-color: var(--color-thread);
+  /* No bottom hairline — native toolbar, column zones carry the shell. */
+  overflow: hidden;
+}
+.pica-titlebar-zone--rail {
+  background: var(--color-surface);
+  box-shadow: inset -1px 0 0 color-mix(in srgb, var(--color-line) 65%, transparent);
+}
+.pica-titlebar-zone--thread {
+  background: var(--color-thread);
+}
+.pica-titlebar-zone--editor {
+  background: var(--color-surface);
+  box-shadow: inset 1px 0 0 color-mix(in srgb, var(--color-line) 65%, transparent);
+}
+/* Collapse editor chrome when --editor-w is 0 (panel closed). */
+.pica-titlebar-zone--editor:empty {
+  min-width: 0;
+}
+.pica-titlebar button,
+.pica-titlebar a,
+.pica-titlebar input,
+.pica-titlebar [role="button"],
+.pica-titlebar [role="status"] {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+
+/* Legacy decorum-injected Win controls (unused after ActionBar split; harmless if absent) */
+.pica-titlebar button.decorum-tb-btn,
+.pica-titlebar button#decorum-tb-minimize,
+.pica-titlebar button#decorum-tb-maximize,
+.pica-titlebar button#decorum-tb-close {
+  height: var(--titlebar-h) !important;
+  width: 46px !important;
+  color: var(--color-ink);
+}
+.dark .pica-titlebar button.decorum-tb-btn:hover:not(#decorum-tb-close) {
+  background: rgb(255 255 255 / 0.08) !important;
+}
+
+/* Sidebar column resize (desktop) */
+.pica-sidebar-resize::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  transform: translateX(-50%);
+  border-radius: 0;
+  background: color-mix(in srgb, var(--color-line) 80%, transparent);
+  transition: background 120ms ease, width 120ms ease;
+}
+.pica-sidebar-resize:hover::after,
+.pica-resizing-sidebar .pica-sidebar-resize::after {
+  width: 2px;
+  background: color-mix(in srgb, var(--color-ink) 28%, transparent);
+}
+body.pica-resizing-sidebar {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+body.pica-resizing-sidebar * {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+
+/* Right editor column resize (desktop) — same chrome as sidebar */
+.pica-editor-resize::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  transform: translateX(-50%);
+  background: color-mix(in srgb, var(--color-line) 80%, transparent);
+  transition: background 120ms ease, width 120ms ease;
+}
+.pica-editor-resize:hover::after,
+.pica-resizing-editor .pica-editor-resize::after {
+  width: 2px;
+  background: color-mix(in srgb, var(--color-ink) 28%, transparent);
+}
+body.pica-resizing-editor {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+body.pica-resizing-editor * {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+
+
+/* Round 9–10: Rakazo message / status-card / dialog / scroll / loading */
+.pica-bubble-agent {
+  background: var(--color-bubble-agent);
+  color: var(--color-ink);
+  /* Soft paper inset — material without a hard edge */
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.55), var(--shadow-card);
+}
+.dark .pica-bubble-agent {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04), var(--shadow-card);
+}
+.pica-status-card {
+  letter-spacing: -0.01em;
+}
+.pica-dialog-panel {
+  /* GSAP enterDialogPanel owns motion; CSS fallback for reduced-motion */
+}
+
+
+/* Global thin scrollbar fallback (chat / sidebar / dialogs use .pica-scroll) */
+html,
+body {
+  scrollbar-color: var(--color-scrollbar) transparent;
+  scrollbar-width: thin;
+}
+/* Match Rakazo .rk-scroll — 6px thumb, theme scrollbar tokens */
+.pica-scroll {
+  scrollbar-color: var(--color-scrollbar) transparent;
+  scrollbar-width: thin;
+}
+.pica-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.pica-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.pica-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-scrollbar);
+  border-radius: 3px;
+}
+.pica-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--color-scrollbar-hover);
+}
+
+/* PageLoading-style delayed spinner (fade in after 500ms) */
+@keyframes pica-loading-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes pica-spin {
+  to { transform: rotate(360deg); }
+}
+.pica-loading-delay {
+  opacity: 0;
+  animation:
+    pica-loading-fade 0.3s ease 0.5s forwards,
+    pica-spin 0.75s linear 0.5s infinite;
+}
+.pica-loading-label {
+  opacity: 0;
+  animation: pica-loading-fade 0.3s ease 0.55s forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pica-loading-delay,
+  .pica-loading-label {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pica-msg-row,
+  .pica-status-card,
+  .pica-dialog-panel {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+
+/* Round 11 — composer focus, rail highlight, jump flash */
+.pica-composer-bar {
+  transform-origin: 50% 100%;
+  transition: box-shadow 0.16s ease, border-color 0.16s ease;
+}
+.pica-composer-bar.is-focused {
+  /* Neutral focus — no accent ring/border/outline (user: 选中不要彩边) */
+  border-color: var(--color-line) !important;
+  box-shadow: var(--shadow-composer) !important;
+  outline: none !important;
+}
+
+/* Round 12 — BoardUI agent-composer proportions (tightened ~44/32) */
+.pica-composer-bar {
+  /* ~44px pill baseline; expanded rows keep p-1.5 from markup */
+  --pica-composer-control: 2rem; /* 32px */
+}
+.pica-composer-controls {
+  min-height: var(--pica-composer-control);
+}
+.pica-composer-bar textarea {
+  caret-color: var(--color-accent);
+}
+.pica-msg-row {
+  /* blur enter clears filter; keep will-change off after settle */
+  transform-origin: 50% 50%;
+}
+/* Lulu/HuLa selection feel + BoardUI active fill (#ebebeb / white 12%).
+   Soft 12px radius, material bg transition, press darken — no cardy inset pop. */
+.pica-rail-row {
+  border-radius: 12px;
+  transition:
+    background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateZ(0);
+}
+.pica-rail-row:not([data-rail-active="1"]):hover {
+  background-color: color-mix(in srgb, var(--color-ink) 4.5%, transparent);
+}
+.dark .pica-rail-row:not([data-rail-active="1"]):hover {
+  background-color: rgb(255 255 255 / 0.06);
+}
+.pica-rail-row:active {
+  filter: brightness(0.97);
+}
+.dark .pica-rail-row:active {
+  filter: brightness(1.08);
+}
+.pica-rail-row[data-rail-active="1"] {
+  /* ~Rakazo bg-sidebar-accent (#ebebeb ≈ 8% ink) */
+  background-color: color-mix(in srgb, var(--color-ink) 8%, transparent);
+  box-shadow: none;
+}
+.dark .pica-rail-row[data-rail-active="1"] {
+  background-color: rgb(255 255 255 / 0.10);
+  box-shadow: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pica-rail-row {
+    transition: none;
+  }
+  .pica-rail-row:active {
+    filter: none;
+  }
+}
+.pica-flash-hit {
+  outline: 2px solid color-mix(in oklab, var(--color-accent) 65%, transparent);
+  outline-offset: 3px;
+  border-radius: 22px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pica-composer-bar {
+    transition: none;
+  }
+  .pica-composer-bar.is-focused {
+    box-shadow: var(--shadow-composer);
+  }
+}
